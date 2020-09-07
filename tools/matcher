@@ -1,8 +1,8 @@
 #!/bin/bash 
 
-#this will be used to test some commands/loops before directly adding to working document
-
-read -p "Enter a VM name, press "l" for list of available VMs: " img_name
+#custom tool that can be ran to ensure that VM input by user is real.
+#Command can be ran as #command #parameter
+#$1 refers to the parameter being passed as vm_name in main mk_drive file
 
 vms_all=$( virsh list --all --name)
 
