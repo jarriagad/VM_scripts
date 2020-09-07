@@ -1,0 +1,7 @@
+#Plain text file that describes all that should not be included in the visible portion of the VM_scripts project.
+
+#ignore all swp files for vim
+*.swp
+
+# Ignore any log files 
+# *.log

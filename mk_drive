@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#This script creates a KVM image disk if n size and attaches it to any running vm
-#Set defaults (for now)
+#This script creates a KVM image disk of n size and attaches it to any vm
+#Set defaults (for now):
 # default storage location /mnt/sdb/vm_store/default01
 # default image format = raw
 
@@ -10,26 +10,34 @@ img_location=/mnt/sdb/vm_store/default01
 echo ""
 echo -e "Welcome to the KVM img creator and mounting tool!"
 echo -e "Disk will be created at /mnt/sdb/vm_store/default01 by default"
-echo -e "Please specify only enter a number, size will default to G"
+echo -e "Only enter integer for disk size (GB)" 
 echo -e "Please follow the convention for img names: <vm attached to>-<purpose>-<size>\n"
 read -p "Enter image size: " img_size
 read -p "Enter image name: " img_name
 read -p "Enter target VM name, or press "l" to list all VMs: " target_vm
 
+#Creates option to list all VMs as well as selecting target VM
+#also echoes a confirmation message.
 if [[ $target_vm = "l" ]]; then
 	virsh list --all --name
 	read -p "Please select one of the VM's listed: " target_vm
+	printf "Image name: $img_name\nImage size: $img_size\nImage location: $img_location/$img_name\n"
 else
-	echo "Image: $img_name of Size: $img_size will be \
-created at "$img_location"/"$img_name" and attached to $target_vm"
+	printf "Image name: $img_name\nImage size: $img_size\nImage location: $img_location/$img_name\n"
 fi
 
 read -p "Create image? (y/n)" img_confirmation
 
+# Sets confirmation variable and either runs command or shuts down script upon answer
 if [[ $img_confirmation = "y" ]]; then
 	echo "Creating image..."
-	qemu-img create -f raw "$img_location"/"$img_name" $img_size"G" && 
+	echo "qemu-img create -f raw "$img_location"/"$img_name" ${img_size}G" && 
 	echo "Image $img_name has been sucessfuly created!" 
+elif [[ $img_confirmation = "n" ]]; then
+	exit 0
+else
+	printf "Option not available, goodbye"
+	exit 0
 fi
 
 read -p "Would you like to attach $img_name to $target_vm? (y/n)" img_confirmation
@@ -37,7 +45,7 @@ read -p "Would you like to attach $img_name to $target_vm? (y/n)" img_confirmati
 if [[ $img_confirmation = y ]]; then
 	read -p "enter target block name: " blk_name
 	echo "Attaching $img_name to $target_vm..."
-	virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent &&
+	echo "virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent" &&
 	echo "Image $img_name has been sucsessfuly attached to $target_vm"
 fi
 
