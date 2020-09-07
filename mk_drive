@@ -17,7 +17,7 @@ read -p "Enter image name: " img_name
 read -p "Enter target VM name, or press "l" to list all VMs: " target_vm
 
 if [[ $target_vm = "l" ]]; then
-	virsh list --all --name;
+	virsh list --all --name
 	read -p "Please select one of the VM's listed: " target_vm
 else
 	echo "Image: $img_name of Size: $img_size will be \
@@ -27,9 +27,9 @@ fi
 read -p "Create image? (y/n)" img_confirmation
 
 if [[ $img_confirmation = "y" ]]; then
-	echo "Creating image...";
+	echo "Creating image..."
 	qemu-img create -f raw "$img_location"/"$img_name" $img_size"G" && 
-	echo "Image $img_name has been sucessfuly created!"; 
+	echo "Image $img_name has been sucessfuly created!" 
 fi
 
 read -p "Would you like to attach $img_name to $target_vm? (y/n)" img_confirmation
