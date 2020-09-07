@@ -4,4 +4,7 @@
 *.swp
 
 # Ignore any log files 
-# *.log
+*.log
+
+#Ignore ./testbed file
+./testbed

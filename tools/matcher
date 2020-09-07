@@ -1,0 +1,21 @@
+#!/bin/bash 
+
+#this will be used to test some commands/loops before directly adding to working document
+
+read -p "Enter a VM name, press "l" for list of available VMs: " img_name
+
+vms_all=$( virsh list --all --name)
+
+for i in $vms_all
+do
+	if [[ "$img_name" == "l" ]]; then
+		virsh list --all  --name
+		exec ./testbed
+	elif [[ "$img_name" == "$i" ]]; then
+		echo "item is in the list"
+		exit
+	else
+		echo "Not a valid option, please try again."
+		exec ./testbed
+	fi
+done

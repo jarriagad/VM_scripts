@@ -1,0 +1,7 @@
+TODO:
+
+1. Create filter to ensure that VM selected is available in list
+2. Create matcher script that allows for confirming that image is available
+Clean up code and condence it
+
+

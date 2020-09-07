@@ -6,6 +6,7 @@
 # default image format = raw
 
 img_location=/mnt/sdb/vm_store/default01
+vms_all=$( virsh list --all --name )
 
 echo ""
 echo -e "Welcome to the KVM img creator and mounting tool!"
@@ -16,15 +17,21 @@ read -p "Enter image size: " img_size
 read -p "Enter image name: " img_name
 read -p "Enter target VM name, or press "l" to list all VMs: " target_vm
 
-#Creates option to list all VMs as well as selecting target VM
-#also echoes a confirmation message.
-if [[ $target_vm = "l" ]]; then
-	virsh list --all --name
-	read -p "Please select one of the VM's listed: " target_vm
-	printf "Image name: $img_name\nImage size: $img_size\nImage location: $img_location/$img_name\n"
-else
-	printf "Image name: $img_name\nImage size: $img_size\nImage location: $img_location/$img_name\n"
-fi
+# This loops through all VMs to make sure selected is real. It exits if no VM found
+# Currently this loops marks everything as failed
+# Trying to link to ./tools/matcher script to avoid spaghetti code
+for i in $vms_all
+do
+	if [[ "$target_vm" == "l" ]]; then
+		echo "$vms_all"
+		read -p "Please select one of the VM's listed: " target_vm
+	elif [[ "$target_vm" == "$i" ]]; then
+		printf "Image name: $img_name\nImage size: $img_size\nImage location: $img_location/$img_name\n"
+	else
+		echo "111Not a valid option, please try again."
+		exit			
+	fi
+done
 
 read -p "Create image? (y/n)" img_confirmation
 
@@ -42,6 +49,7 @@ fi
 
 read -p "Would you like to attach $img_name to $target_vm? (y/n)" img_confirmation
 
+#This attaches the new volume to as a block device to selected vm
 if [[ $img_confirmation = y ]]; then
 	read -p "enter target block name: " blk_name
 	echo "Attaching $img_name to $target_vm..."
