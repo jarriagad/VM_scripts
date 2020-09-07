@@ -1,0 +1,48 @@
+#!/bin/bash
+
+#Command that creates virtual machines, prompted.
+#run as sudo, duh
+#Just collecting information
+echo ""
+echo -e "Welcome to the KVM VM creator tool!\n"
+read -p "VM name: " vm_name
+read -p "Allocated memory (Mb): " vm_mem
+read -p "Allovated vcpus: " vm_cpu
+read -p "Would you like to run the VM off a SSD of HDD? " drive_speed
+
+#vm_path is dependent on drive_speed variable.
+if [[ $drive_speed = "SSD" ]] || [[ $drive_speed = "ssd" ]]; then
+	vm_path=/home/ssd_store/
+elif [[ $drive_speed = "HDD" ]] || [[ $drive_speed = "hdd" ]]; then
+	vm_path=/mnt/sdb/vm_store/
+else
+	echo "Option not available!"
+fi
+
+read -p "Disk size (Gb): " vm_disk
+read -p "OS, or press "l" for a list od avilable images: " os_type
+
+if [[ $os_type = "l" ]]; then
+#need to create a system that will show available ISOs
+
+
+
+echo $vm_name
+echo $vm_mem
+echo $vm_cpu
+echo $drive_speed
+echo $vm_path
+
+
+
+#read -p "Disk size: " vm_disk
+#read -p "Path to ISO: " vm_iso
+#echo "Network default: br0, press f if you'd like to change to default"
+#echo "graphics = vnc"
+
+
+
+
+
+
+
