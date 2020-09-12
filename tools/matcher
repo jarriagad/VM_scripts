@@ -4,18 +4,6 @@
 #Command can be ran as #command #parameter
 #$1 refers to the parameter being passed as vm_name in main mk_drive file
 
-vms_all=$( virsh list --all --name)
+cmd_virsh=$( virsh list --all --name )
 
-for i in $vms_all
-do
-	if [[ "$img_name" == "l" ]]; then
-		virsh list --all  --name
-		exec ./testbed
-	elif [[ "$img_name" == "$i" ]]; then
-		echo "item is in the list"
-		exit
-	else
-		echo "Not a valid option, please try again."
-		exec ./testbed
-	fi
-done
+[[ " $cmd_virsh " =~ "$1" ]] && echo "true" || echo "false"

@@ -20,20 +20,15 @@ read -p "Enter target VM name, or press "l" to list all VMs: " target_vm
 # This loops through all VMs to make sure selected is real. It exits if no VM found
 # Currently this loops marks everything as failed
 # Trying to link to ./tools/matcher script to avoid spaghetti code
-for i in $vms_all
-do
-	if [[ "$target_vm" == "l" ]]; then
-		echo "$vms_all"
-		read -p "Please select one of the VM's listed: " target_vm
-	elif [[ "$target_vm" == "$i" ]]; then
-		printf "Image name: $img_name\nImage size: $img_size\nImage location: $img_location/$img_name\n"
-	else
-		echo "111Not a valid option, please try again."
-		exit			
-	fi
-done
 
-read -p "Create image? (y/n)" img_confirmation
+if [[ $target_vm = "l" ]]; then
+	echo $vms_all
+	read -p "Target VM: " target_vm
+elif [[ $vms_all =~ "$target_vm" ]]; then 
+	read -p "Create image? (y/n)"
+else
+	echo "Not a vm, goodbye" && exit
+fi
 
 # Sets confirmation variable and either runs command or shuts down script upon answer
 if [[ $img_confirmation = "y" ]]; then
@@ -47,11 +42,11 @@ else
 	exit 0
 fi
 
-read -p "Would you like to attach $img_name to $target_vm? (y/n)" img_confirmation
+read -p "Would you like to attach $img_name to $target_vm? (y/n)" atch_confirmation
 
 #This attaches the new volume to as a block device to selected vm
-if [[ $img_confirmation = y ]]; then
-	read -p "enter target block name: " blk_name
+if [[ $atch_confirmation = y ]]; then
+	read -p "enter target block target: " blk_name
 	echo "Attaching $img_name to $target_vm..."
 	echo "virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent" &&
 	echo "Image $img_name has been sucsessfuly attached to $target_vm"
