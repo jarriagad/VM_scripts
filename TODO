@@ -1,7 +1,4 @@
 TODO:
 
-1. Create filter to ensure that VM selected is available in list
-2. Create matcher script that allows for confirming that image is available
-Clean up code and condence it
-
-
+1. Currently if name is spelled wrong then scripts simply exits.
+    a. create system where if Vm name does not match you can try again.

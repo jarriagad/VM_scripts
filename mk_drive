@@ -18,16 +18,19 @@ read -p "Enter image name: " img_name
 read -p "Enter target VM name, or press "l" to list all VMs: " target_vm
 
 # This loops through all VMs to make sure selected is real. It exits if no VM found
-# Currently this loops marks everything as failed
-# Trying to link to ./tools/matcher script to avoid spaghetti code
+while [[ $target_vm == "l" ]]
+do
+    echo $vms_all;
+    read -p "Enter target VM (l for list): " target_vm;
+    if [[ $target_vm != "l" ]]; then
+        break
+    fi
+done
 
-if [[ $target_vm = "l" ]]; then
-	echo $vms_all
-	read -p "Target VM: " target_vm
-elif [[ $vms_all =~ "$target_vm" ]]; then 
-	read -p "Create image? (y/n)"
+if [[ $vms_all =~ "$target_vm" ]]; then 
+	read -p "Create image? (y/n)" img_confirmation
 else
-	echo "Not a vm, goodbye" && exit
+	echo  -e "Not a vm, goodbye\n" && exit
 fi
 
 # Sets confirmation variable and either runs command or shuts down script upon answer
