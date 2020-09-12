@@ -1,21 +1,23 @@
 #!/bin/bash 
 
-#this will be used to test some commands/loops before directly adding to working document
+#testing while loop to keep asking for correct input 
 
-read -p "Enter a VM name, press "l" for list of available VMs: " img_name
+#pseudo code:
+#while img_name not in img_list
+    #input img_name
+    # img_name in img_list
+    #then echo something else
+read -p "Enter vm name: " vm_name
+vm_list=$( virsh list --all --name )
 
-vms_all=$( virsh list --all --name)
-
-for i in $vms_all
+while [[ !( "$vm_list" =~ "$vm_name" ) ]]
 do
-	if [[ "$img_name" == "l" ]]; then
-		virsh list --all  --name
-		exec ./testbed
-	elif [[ "$img_name" == "$i" ]]; then
-		echo "item is in the list"
-		exit
-	else
-		echo "Not a valid option, please try again."
-		exec ./testbed
-	fi
+    printf "Virtual Machine not found!\n"
+    printf "Please select one of the following: \n"
+    printf "$vm_list"
+    read -p "please try again: " vm_name
+    if [[ "$vm_list" =~ "$vm_name" ]];then
+        break
+    fi
 done
+     

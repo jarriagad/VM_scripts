@@ -17,21 +17,19 @@ read -p "Enter image size: " img_size
 read -p "Enter image name: " img_name
 read -p "Enter target VM name, or press "l" to list all VMs: " target_vm
 
-# This loops through all VMs to make sure selected is real. It exits if no VM found
-while [[ $target_vm == "l" ]]
+#Loop ensures that vm chosen is real
+while [[ !( "$vms_all" =~ "$target_vm" ) ]]
 do
-    echo $vms_all;
-    read -p "Enter target VM (l for list): " target_vm;
-    if [[ $target_vm != "l" ]]; then
+    printf "Virtual machine not found!\n"
+    printf "Please choose one of the following: \n"
+    printf "$vms_all \n"
+    read -p "Try again: "
+    if [[ "$vms_all" =~ "$target_vm" ]]; then
+        printf "Creating $img_name at $img_location"
+        read -p "Confirm? (y/n) ..." img_confirmation
         break
     fi
 done
-
-if [[ $vms_all =~ "$target_vm" ]]; then 
-	read -p "Create image? (y/n)" img_confirmation
-else
-	echo  -e "Not a vm, goodbye\n" && exit
-fi
 
 # Sets confirmation variable and either runs command or shuts down script upon answer
 if [[ $img_confirmation = "y" ]]; then
