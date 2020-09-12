@@ -1,4 +1,0 @@
-TODO:
-
-1. Currently if name is spelled wrong then scripts simply exits.
-    a. create system where if Vm name does not match you can try again.
