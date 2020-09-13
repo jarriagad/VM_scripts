@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #Command that creates virtual machines, prompted.
-#run as sudo, duh
+#run as sudo
 #Just collecting information
 echo ""
 echo -e "Welcome to the KVM VM creator tool!\n"
 read -p "VM name: " vm_name
 read -p "Allocated memory (Mb): " vm_mem
-read -p "Allovated vcpus: " vm_cpu
+read -p "Allocated vcpus: " vm_cpu
 read -p "Would you like to run the VM off a SSD of HDD? " drive_speed
 
 #vm_path is dependent on drive_speed variable.
@@ -22,8 +22,8 @@ fi
 read -p "Disk size (Gb): " vm_disk
 read -p "OS, or press "l" for a list od avilable images: " os_type
 
-if [[ $os_type = "l" ]]; then
-#need to create a system that will show available ISOs
+if [[ $os_type == "l" ]]; then
+#TODO: need to create a system that will show available ISOs
 
 
 
