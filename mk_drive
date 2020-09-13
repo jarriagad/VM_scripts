@@ -21,41 +21,37 @@ read -p "Confirm? (y/n)...? " img_confirmation
 #Creates image after confirmation from $img_confirmation
 if [[ $img_confirmation = "y" ]]; then
 	echo "Creating image..."
-	echo "qemu-img create -f raw "$img_location"/"$img_name" ${img_size}G" && 
+	qemu-img create -f raw "$img_location"/"$img_name" ${img_size}G && 
 	echo "Image $img_name has been sucessfuly created!" 
 else
 	printf "Goodbye\n"
     exit 0
 fi
 
-read -p "Would you like to attach $img_name to $target_vm? (y/n)" atch_confirmation
+read -p "Mount $img_name to a Virtual Machine? (y/n)" atch_confirmation
 
+#Confirms and then loops to make sure that VM chosen is real
 if [[ "$atch_confirmation" == "y" ]]; then
-    read -p "Enter target VM name, or press "l" to list all VMs: " target_vm
-else
-    printf "Goodbye\n"
-    exit 0
+    read -p "Enter target VM name, or type 'list' to list all VMs: " target_vm
+    while [[ !( "$vms_all" =~ "$target_vm" ) ]]
+    do
+        printf "Please choose one of the following: \n"
+        printf "$vms_all \n"
+        read -p "Try again: " target_vm
+        if [[ "$vms_all" =~ "$target_vm" ]]; then
+            printf "$img_name will be mounted on $target_vm"
+            read -p "Confirm? (y/n) ..." mnt_confirmation
+            break
+        fi
+    done
 fi
 
-#Loop ensures that vm chosen is real
-while [[ !( "$vms_all" =~ "$target_vm" ) ]]
-do
-    printf "Virtual machine not found!\n"
-    printf "Please choose one of the following: \n"
-    printf "$vms_all \n"
-    read -p "Try again: "
-    if [[ "$vms_all" =~ "$target_vm" ]]; then
-        printf "Creating $img_name at $img_location"
-        read -p "Confirm? (y/n) ..." img_confirmation
-        break
-    fi
-done
 
 #This attaches the new volume to as a block device to selected vm
-if [[ $atch_confirmation = y ]]; then
+if [[ $mnt_confirmation == "y" ]]; then
 	read -p "enter target block target: " blk_name
 	echo "Attaching $img_name to $target_vm..."
-	echo "virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent" &&
+	virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent &&
 	echo "Image $img_name has been sucsessfuly attached to $target_vm"
 else
     printf "Goodbye \n"
