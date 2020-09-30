@@ -23,6 +23,7 @@ if [[ $img_confirmation = "y" ]]; then
 	echo "Creating image..."
 	qemu-img create -f raw "$img_location"/"$img_name" ${img_size}G && 
 	echo "Image $img_name has been sucessfuly created!" 
+	printf "$date \nqemu-img create -f raw "$img_location"/"$img_name" ${img_size}G" >> ./VM_scripts.log
 else
 	printf "Goodbye\n"
     exit 0
@@ -51,8 +52,10 @@ fi
 if [[ $mnt_confirmation == "y" ]]; then
 	read -p "enter target block target: " blk_name
 	echo "Attaching $img_name to $target_vm..."
-	virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent &&
+    printf "virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent &&"
 	echo "Image $img_name has been sucsessfuly attached to $target_vm"
+    printf "$date \nvirsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent"
+
 else
     printf "Goodbye \n"
     exit 0

@@ -1,0 +1,4 @@
+ 
+qemu-img create -f raw /mnt/sdb/vm_store/default01/test56 5G 
+qemu-img create -f raw /mnt/sdb/vm_store/default01/rhcsatest 15G 
+qemu-img create -f raw /mnt/sdb/vm_store/default01/rhcsatest15G 15G
