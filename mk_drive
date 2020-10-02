@@ -23,7 +23,6 @@ if [[ $img_confirmation = "y" ]]; then
 	echo "Creating image..."
 	qemu-img create -f raw "$img_location"/"$img_name" ${img_size}G && 
 	echo "Image $img_name has been sucessfuly created!" 
-	printf "$( date ) \nqemu-img create -f raw "$img_location"/"$img_name" ${img_size}G" >> ./VM_scripts.log
 else
 	printf "Goodbye\n"
     exit 0
