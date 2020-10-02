@@ -1,0 +1,52 @@
+#!/bin/bash
+
+#This script checks if entries are valid and then mounts disk to image
+#Set defaults (for now):
+# default storage location /mnt/sdb/vm_store/default01
+
+img_location=/mnt/sdb/vm_store/default01
+vms_all=$( virsh list --all --name )
+numvar=1
+numvar1=1
+
+
+#Enumerates available images    
+printf "Please select volume: \n" 
+for i in $( ls -l $img_location | tail -n +2 | awk '{ print $9 }' ); do
+    printf "${numvar}. $i\n"
+    (("numvar"+=1))
+done
+read -p ": " img_name
+
+
+#Enumerates available VMs 
+printf "Please select VM: \n"
+for i in $( virsh list --all --name ); do
+    printf "${numvar1}. $i\n"
+    ((numvar1+=1))
+done 
+read -p ": " target_vm
+
+#Checks that VM selected is real
+while [[ !( "$vms_all" =~ "$target_vm" ) ]]
+do
+    printf "Please choose one of the following: \n"
+    printf "$vms_all \n"
+    read -p "Try again: " target_vm
+done
+
+read -p "Confirm (y/n): " mnt_confirmation
+
+#This attaches the new volume to as a block device to selected vm
+if [[ $mnt_confirmation == "y" ]]; then
+	read -p "enter target block target: " blk_name
+	echo "Attaching $img_name to $target_vm..."
+    printf "virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent &&"
+	echo "Image $img_name has been sucsessfuly attached to $target_vm"
+    printf "$( date )\nvirsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent"
+
+else
+    printf "Goodbye \n"
+    exit 0
+fi
+

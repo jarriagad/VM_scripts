@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#This script creates a KVM image disk of n size and attaches it to any vm
+#This script creates a KVM image disk of n size - does not attach it
 #Set defaults (for now):
 # default storage location /mnt/sdb/vm_store/default01
 # default image format = raw
@@ -23,41 +23,9 @@ if [[ $img_confirmation = "y" ]]; then
 	echo "Creating image..."
 	qemu-img create -f raw "$img_location"/"$img_name" ${img_size}G && 
 	echo "Image $img_name has been sucessfuly created!" 
-	printf "$date \nqemu-img create -f raw "$img_location"/"$img_name" ${img_size}G" >> ./VM_scripts.log
+	printf "$( date ) \nqemu-img create -f raw "$img_location"/"$img_name" ${img_size}G" >> ./VM_scripts.log
 else
 	printf "Goodbye\n"
-    exit 0
-fi
-
-read -p "Mount $img_name to a Virtual Machine? (y/n)" atch_confirmation
-
-#Confirms and then loops to make sure that VM chosen is real
-if [[ "$atch_confirmation" == "y" ]]; then
-    read -p "Enter target VM name, or type 'list' to list all VMs: " target_vm
-    while [[ !( "$vms_all" =~ "$target_vm" ) ]]
-    do
-        printf "Please choose one of the following: \n"
-        printf "$vms_all \n"
-        read -p "Try again: " target_vm
-        if [[ "$vms_all" =~ "$target_vm" ]]; then
-            printf "$img_name will be mounted on $target_vm"
-            read -p "Confirm? (y/n) ..." mnt_confirmation
-            break
-        fi
-    done
-fi
-
-
-#This attaches the new volume to as a block device to selected vm
-if [[ $mnt_confirmation == "y" ]]; then
-	read -p "enter target block target: " blk_name
-	echo "Attaching $img_name to $target_vm..."
-    printf "virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent &&"
-	echo "Image $img_name has been sucsessfuly attached to $target_vm"
-    printf "$date \nvirsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent"
-
-else
-    printf "Goodbye \n"
     exit 0
 fi
 
