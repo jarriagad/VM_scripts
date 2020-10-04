@@ -46,6 +46,7 @@ do
     read -p ": " target_vm
 done
 
+# Lists blocks already in use by VM
 printf "Select a block name, cannot match any listed below: \n"
 printf "$(./tools/BLOCKfinder $target_vm) \n"
 read -p ": " blk_name
