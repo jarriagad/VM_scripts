@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 
 #script that allows to be passed with name of VM to see attached block devices
 
