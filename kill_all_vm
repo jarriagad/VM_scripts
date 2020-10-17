@@ -1,0 +1,8 @@
+#!/bin/bash
+#Kills all running virtual machines
+
+for i in $(virsh list --state-running --name); do 
+virsh shutdown $i
+done
+
+exit 0
