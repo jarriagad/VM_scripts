@@ -17,7 +17,7 @@ done
 
 #Assign image name
 for i in $_ls_disk; do
-	n=((n + 1))
+	n=$(( n + 1 ))
 done
 
 printf $i
