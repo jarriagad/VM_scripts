@@ -1,30 +1,30 @@
 #!/bin/bash
 
-#This script creates a KVM image disk of n size - does not attach it
-#Set defaults (for now):
-# default storage location /mnt/sdb/vm_store/default01
-# default image format = raw
+#Script that creates raw block device that can then be mounted to respective VM
 
-img_location=/mnt/sdb/vm_store/default01
-vms_all=$( virsh list --all --name )
 
-echo ""
-echo -e "Welcome to the KVM volume creator and mounting tool!"
-echo -e "Disk will be created at /mnt/sdb/vm_store/default01 by default"
-echo -e "Only enter integer for disk size (GB)" 
-echo -e "Please follow the convention for img names: <vm attached to>-<purpose>-<size>\n"
-read -p "Enter image size: " img_size
-read -p "Enter image name: " img_name
-printf "Creating "$img_name" at "$img_location"\n"
-read -p "Confirm? (y/n)...? " img_confirmation
+_cl_storage=/cloud/storage/
+_ls_storage=$( ls $_cl_storage )
 
-#Creates image after confirmation from $img_confirmation
-if [[ $img_confirmation = "y" ]]; then
-	echo "Creating image..."
-	qemu-img create -f raw "$img_location"/"$img_name" ${img_size}G && 
-	echo "Image $img_name has been sucessfuly created!" 
-else
-	printf "Goodbye\n"
-    exit 0
-fi
+#Select storage location
+printf "Please select location for image: \n"
+select _dirs in $_ls_storage;
+do
+	break;
+done	
+
+#Enter drive size
+read -p "Please enter image size : " _img_size
+
+#Assign image name (standardized)
+for j in $( ls $_cl_storage/$_dirs); do
+	_num_dirs=$(( _num_dirs + 1 ))
+done
+
+#Clean up image name, _img_2 is final
+_img_1="strg$(( $_num_dirs + 1 ))-$_dirs"
+_img_2="${_img_1%mounts}${_img_size}G"
+
+#Run command to actually create disk image
+qemu-img create -f raw "$_cl_storage""$_dirs"/"$_img_2" ${_img_size}G && printf "Disk successfully created\n"
 
