@@ -1,64 +1,22 @@
 #!/bin/bash
 
-#This script checks if entries are valid and then mounts disk to image
-#Set defaults (for now):
-# default storage location /mnt/sdb/vm_store/default01
-
-img_location=/mnt/sdb/vm_store/default01
-vms_all=$( virsh list --all --name )
-img_all=$( ls -l $img_location | tail -n +2 | awk '{ print $9 }' )
-numvar=1
-
-
-#Enumerates available images, ran as subshell to reset numvar variable    
-printf "Please select volume: \n" 
-(
-for i in $img_all; do
-    printf "${numvar}. $i\n"
-    numvar=$(( $numvar + 1 ))
-done
-)
-read -p ": " img_name
-
-#Checks that selected volume is availabe in img_location    
-while [[ !( "$img_all" =~ "$img_name" ) ]]
-do
-    printf "Please choose one of the following: \n"
-    printf "$img_all \n"
-    read -p ": " target_vm
+#Select vm to mount img to 
+printf "Select VM that disk will be mounted to: \n"
+select _vm in $( virsh list --all --name ); do
+    break
 done
 
-#Enumerates available VMs, ran as subshell
-printf "Please select VM: \n"
-(
-for i in $( virsh list --all --name ); do
-    printf "${numvar}. $i\n"
-    numvar=$(( $numvar + 1 ))
-done 
-)
-read -p ": " target_vm
-
-#Checks that VM selected is real
-while [[ !( "$vms_all" =~ "$target_vm" ) ]]
-do
-    printf "Please choose one of the following: \n"
-    printf "$vms_all \n"
-    read -p ": " target_vm
+#List avaiable disks for _vm
+_img_pth=/cloud/storage/${_vm}-mounts
+printf "Select disk to mount to $_vm: \n"
+select _img in $( ls $_img_pth ); do
+    break
 done
 
-# Lists blocks already in use by VM
-printf "Select a block name, cannot match any listed below: \n"
-printf "$(./tools/BLOCKfinder $target_vm) \n"
-read -p ": " blk_name
-read -p "Confirm mount $img_name on $target_vm as $blk_name (y/n): " mnt_confirmation
+printf "Please select a block device name, the below cannot be used: \n"
+/root/VM_scripts/tools/BLOCKfinder $_vm
+read -p ": " _blk
 
-#This attaches the new volume to as a block device to selected vm
-if [[ $mnt_confirmation == "y" ]]; then
-	echo "Attaching $img_name to $target_vm..."
-    virsh attach-disk $target_vm "$img_location"/"$img_name" $blk_name --persistent || printf "Mount failed!"
-	echo "Image $img_name has been sucsessfuly attached to $target_vm"
-else
-    printf "Goodbye \n"
-    exit 0
-fi
+#Runs command to mount drive _vm
+virsh attach-disk $_vm $_img_pth/$_img $_blk --persistent || printf "Error!"
 
