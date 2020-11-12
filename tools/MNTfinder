@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#Finds active virtual machines and creates a folder where all block devices for each machine are kept
+#Ex.: timemcn03 block devices are kept in "/cloud/storage/timemcn03-mounts"
+
+list_vms=$(virsh list --all --name)
+path1=/cloud/storage
+
+for i in $list_vms; do
+	path2="$path1/$i-mounts"
+	if [[ -d "$path2" ]]
+	then
+		printf "$i-mounts already exists\n"
+	else
+		mkdir $path2 &&
+		printf "$i has been created\n"
+	fi
+done
