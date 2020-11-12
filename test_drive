@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#Script that creates raw block device that can then be mounted to respective VM
+
+
+_cl_storage=/cloud/storage/
+_ls_storage=$( ls $_cl_storage )
+_ls_disk=$( ls "$_cl_storage"/"$i" )
+n=0
+
+#Select storage location
+select i in $_ls_storage;
+do
+	printf $i
+	break;
+done	
+
+#Assign image name
+for i in $_ls_disk; do
+	n=((n + 1))
+done
+
+printf $i
+printf $n
+
+
+
+
+
+
+
+#printf "qemu-img $n create -f raw "$_cl_storage"/"$i" ${_size}G"
